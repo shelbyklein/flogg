@@ -1,0 +1,862 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: filaments
+    description: Filament management
+  - name: printers
+    description: Printer management
+  - name: logs
+    description: Print log operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /filaments:
+    get:
+      operationId: listFilaments
+      tags: [filaments]
+      summary: List all filaments with entry count and latest date
+      responses:
+        "200":
+          description: List of filaments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FilamentSummary"
+
+    post:
+      operationId: createFilament
+      tags: [filaments]
+      summary: Create a new filament
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFilamentBody"
+      responses:
+        "201":
+          description: Created filament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filament"
+
+  /filaments/{id}:
+    get:
+      operationId: getFilament
+      tags: [filaments]
+      summary: Get a single filament
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Filament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filament"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: updateFilament
+      tags: [filaments]
+      summary: Update a filament's info
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFilamentBody"
+      responses:
+        "200":
+          description: Updated filament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filament"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deleteFilament
+      tags: [filaments]
+      summary: Delete a filament and all its log entries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /printers:
+    get:
+      operationId: listPrinters
+      tags: [printers]
+      summary: List all printers
+      responses:
+        "200":
+          description: List of printers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Printer"
+
+    post:
+      operationId: createPrinter
+      tags: [printers]
+      summary: Create a new printer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePrinterBody"
+      responses:
+        "201":
+          description: Created printer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Printer"
+
+  /printers/{id}:
+    get:
+      operationId: getPrinter
+      tags: [printers]
+      summary: Get a single printer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Printer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Printer"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: updatePrinter
+      tags: [printers]
+      summary: Update a printer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePrinterBody"
+      responses:
+        "200":
+          description: Updated printer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Printer"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deletePrinter
+      tags: [printers]
+      summary: Delete a printer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /logs:
+    get:
+      operationId: listLogs
+      tags: [logs]
+      summary: List all print logs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: filamentId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogListResponse"
+
+    post:
+      operationId: createLog
+      tags: [logs]
+      summary: Create a new print log entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLogBody"
+      responses:
+        "201":
+          description: Created log
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilamentLog"
+
+  /logs/{id}:
+    get:
+      operationId: getLog
+      tags: [logs]
+      summary: Get a single print log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Filament log
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilamentLog"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: updateLog
+      tags: [logs]
+      summary: Update a print log entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLogBody"
+      responses:
+        "200":
+          description: Updated log
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FilamentLog"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: deleteLog
+      tags: [logs]
+      summary: Delete a print log entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /logs/stats/summary:
+    get:
+      operationId: getLogsSummary
+      tags: [logs]
+      summary: Get summary statistics for logs
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogsSummary"
+
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for file upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "400":
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "500":
+          description: Failed to generate upload URL.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getStorageObject
+      summary: Serve an uploaded object
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Object content streamed with correct Content-Type.
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Object not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  /logs/images:
+    post:
+      operationId: uploadImage
+      tags: [logs]
+      summary: Upload an image for a log entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadImageBody"
+      responses:
+        "200":
+          description: Image URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadImageResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Filament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        brand:
+          type: string
+        type:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+
+    CreateFilamentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        type:
+          type: string
+        color:
+          type: string
+      required:
+        - name
+
+    UpdateFilamentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        type:
+          type: string
+        color:
+          type: string
+
+    FilamentSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        brand:
+          type: string
+        type:
+          type: string
+        color:
+          type: string
+        lastLogId:
+          type: integer
+        lastDate:
+          type: string
+          format: date-time
+        entryCount:
+          type: integer
+      required:
+        - id
+        - name
+        - entryCount
+
+    PrintSetting:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        unit:
+          type: string
+        category:
+          type: string
+          description: Top-level category (e.g. Retraction, Quality, Strength, Speed)
+        subcategory:
+          type: string
+          description: Subcategory within a category
+        visible:
+          type: boolean
+          description: Whether the row is shown in view mode
+      required:
+        - name
+        - value
+
+    Printer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        brand:
+          type: string
+        nozzleSize:
+          type: string
+          description: Nozzle diameter in mm (0.2, 0.4, 0.6, 0.8)
+        nozzleType:
+          type: string
+          description: Nozzle material (Hardened Steel or Stainless Steel)
+        notes:
+          type: string
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - isDefault
+        - createdAt
+        - updatedAt
+
+    CreatePrinterBody:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        nozzleSize:
+          type: string
+        nozzleType:
+          type: string
+        notes:
+          type: string
+        isDefault:
+          type: boolean
+      required:
+        - name
+
+    UpdatePrinterBody:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        nozzleSize:
+          type: string
+        nozzleType:
+          type: string
+        notes:
+          type: string
+        isDefault:
+          type: boolean
+
+    OtherImage:
+      type: object
+      properties:
+        url:
+          type: string
+        label:
+          type: string
+      required:
+        - url
+
+    FilamentLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        filamentId:
+          type: integer
+        filament:
+          $ref: "#/components/schemas/Filament"
+        printerId:
+          type: integer
+        printer:
+          $ref: "#/components/schemas/Printer"
+        date:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        imageUrl:
+          type: string
+        imageUrl2:
+          type: string
+        imageUrl2Label:
+          type: string
+        otherImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OtherImage"
+        settings:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrintSetting"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - filamentId
+        - filament
+        - date
+        - settings
+        - createdAt
+        - updatedAt
+
+    CreateLogBody:
+      type: object
+      properties:
+        filamentId:
+          type: integer
+        printerId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        notesAfter:
+          type: string
+        imageUrl:
+          type: string
+        imageUrl2:
+          type: string
+        imageUrl2Label:
+          type: string
+        otherImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OtherImage"
+        settings:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrintSetting"
+      required:
+        - filamentId
+        - date
+        - settings
+
+    UpdateLogBody:
+      type: object
+      properties:
+        filamentId:
+          type: integer
+        printerId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        notesAfter:
+          type: string
+        rating:
+          type: integer
+          nullable: true
+        imageUrl:
+          type: string
+        imageUrl2:
+          type: string
+        imageUrl2Label:
+          type: string
+        otherImages:
+          type: array
+          items:
+            $ref: "#/components/schemas/OtherImage"
+        settings:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrintSetting"
+
+    LogListResponse:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilamentLog"
+        total:
+          type: integer
+      required:
+        - logs
+        - total
+
+    LogsSummary:
+      type: object
+      properties:
+        totalLogs:
+          type: integer
+        uniqueFilaments:
+          type: integer
+        uniqueBrands:
+          type: integer
+        recentLogs:
+          type: array
+          items:
+            $ref: "#/components/schemas/FilamentLog"
+        filamentTypeCounts:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              count:
+                type: integer
+            required:
+              - type
+              - count
+      required:
+        - totalLogs
+        - uniqueFilaments
+        - uniqueBrands
+        - recentLogs
+        - filamentTypeCounts
+
+    UploadImageBody:
+      type: object
+      properties:
+        imageData:
+          type: string
+          description: Base64 encoded image data
+        mimeType:
+          type: string
+          description: MIME type of the image
+      required:
+        - imageData
+        - mimeType
+
+    UploadImageResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+        contentType:
+          type: string
+          minLength: 1
+
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string
+
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string

@@ -1,0 +1,159 @@
+{
+    "type": "process",
+    "name": "0.20mm Filaflex 70A 1,75mm @BBL A1M",
+    "from": "User",
+    "instantiation": "true",
+    "inherits": "",
+    "version": "2.5.0.7",
+    "print_settings_id": [
+        "0.20mm Filaflex 70A 1,75mm @BBL A1M"
+    ],
+    "layer_height": "0.20",
+    "initial_layer_print_height": "0.25",
+    "first_layer_height": "0.25",
+    "seam_position": [
+        "aligned"
+    ],
+    "enable_arc_fitting": [
+        "1"
+    ],
+    "elefant_foot_compensation": "0",
+    "xy_size_compensation": "0",
+    "wall_loops": [
+        "2"
+    ],
+    "wall_generator": [
+        "classic"
+    ],
+    "top_shell_layers": [
+        "4"
+    ],
+    "bottom_shell_layers": [
+        "4"
+    ],
+    "top_surface_pattern": [
+        "monotonic"
+    ],
+    "bottom_surface_pattern": [
+        "monotonic"
+    ],
+    "internal_solid_infill_pattern": [
+        "rectilinear"
+    ],
+    "sparse_infill_density": [
+        "15%%"
+    ],
+    "sparse_infill_pattern": [
+        "gyroid"
+    ],
+    "infill_wall_overlap": "25%",
+    "initial_layer_speed": [
+        "50"
+    ],
+    "initial_layer_infill_speed": [
+        "60"
+    ],
+    "outer_wall_speed": [
+        "200"
+    ],
+    "inner_wall_speed": [
+        "200"
+    ],
+    "sparse_infill_speed": [
+        "220"
+    ],
+    "internal_solid_infill_speed": [
+        "220"
+    ],
+    "top_surface_speed": [
+        "200"
+    ],
+    "bridge_speed": [
+        "50"
+    ],
+    "gap_infill_speed": [
+        "250"
+    ],
+    "support_speed": [
+        "150"
+    ],
+    "support_interface_speed": [
+        "80"
+    ],
+    "travel_speed": [
+        "750"
+    ],
+    "travel_speed_z": [
+        "0"
+    ],
+    "small_perimeter_speed": [
+        "50"
+    ],
+    "small_perimeter_threshold": [
+        "0"
+    ],
+    "vertical_shell_speed": [
+        "80%"
+    ],
+    "default_acceleration": [
+        "5000"
+    ],
+    "outer_wall_acceleration": [
+        "3000"
+    ],
+    "inner_wall_acceleration": [
+        "3000"
+    ],
+    "top_surface_acceleration": [
+        "2000"
+    ],
+    "travel_acceleration": [
+        "10000"
+    ],
+    "initial_layer_acceleration": [
+        "500"
+    ],
+    "initial_layer_travel_acceleration": [
+        "6000"
+    ],
+    "sparse_infill_acceleration": [
+        "100%"
+    ],
+    "bridge_flow": [
+        "1"
+    ],
+    "enable_overhang_speed": [
+        "1"
+    ],
+    "overhang_1_4_speed": [
+        "60"
+    ],
+    "overhang_2_4_speed": [
+        "40"
+    ],
+    "overhang_3_4_speed": [
+        "25"
+    ],
+    "overhang_4_4_speed": [
+        "10"
+    ],
+    "overhang_totally_speed": [
+        "0"
+    ],
+    "line_width": "0.37",
+    "outer_wall_line_width": "0.37",
+    "inner_wall_line_width": "0.37",
+    "top_surface_line_width": "0.37",
+    "initial_layer_line_width": "0.40",
+    "internal_solid_infill_line_width": "0.37",
+    "sparse_infill_line_width": "0.50",
+    "support_line_width": "0.40",
+    "skin_infill_line_width": "0.37",
+    "skeleton_infill_line_width": "0.37",
+    "detect_thin_wall": "0",
+    "reduce_crossing_wall": "1",
+    "max_travel_detour_distance": "400",
+    "compatible_printers": [
+        "Bambu Lab A1 mini 0.4 nozzle"
+    ]
+}

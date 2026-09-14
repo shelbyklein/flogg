@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Filament Settings Logger"
+version = "1.0.0"
+id = "artifacts/filament-log"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24785
+
+[services.development]
+run = "pnpm --filter @workspace/filament-log run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/filament-log", "run", "build" ]
+publicDir = "artifacts/filament-log/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24785"
+BASE_PATH = "/"
